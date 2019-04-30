@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
-
+using System.Threading;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
+using Android.Support.V4.Widget;
 using Android.Support.V7.Widget;
 using Android.Util;
 using Android.Views;
@@ -19,6 +21,7 @@ namespace App1.Negocio
     [Activity(Label = "Listado de Personas")]
     public class Fragment_Listado:Fragment
     {
+        private SwipeRefreshLayout mSwipeRefreshLayout;
         private RecyclerView recycler;
         private AdaptadorRecyclerView adaptador;
         private RecyclerView.LayoutManager layoutManager;
@@ -30,6 +33,7 @@ namespace App1.Negocio
             View view = inflater.Inflate(Resource.Layout.fragment_listado, container, false);
             inicializar(view);
             inicializarRecyclerView();
+           inicializarSwipeRefreshLayout();
             cargarDatos();
             return view;
         }
@@ -39,8 +43,34 @@ namespace App1.Negocio
             baseDatos.crearBaseDatos();
             string folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
             Log.Info("DB_PATH", folder);
-            recycler = view.FindViewById<RecyclerView>(Resource.Id.recyclerView);
+            recycler = view.FindViewById<RecyclerView>(Resource.Id.rcvLista);
+            mSwipeRefreshLayout = view.FindViewById<SwipeRefreshLayout>(Resource.Id.swlActualizar);
         }
+        public void inicializarSwipeRefreshLayout()
+        {
+            mSwipeRefreshLayout.SetColorScheme(Android.Resource.Color.HoloBlueBright, Android.Resource.Color.HoloBlueDark, Android.Resource.Color.HoloGreenLight, Android.Resource.Color.HoloRedLight);
+            mSwipeRefreshLayout.Refresh += mSwipeRefreshLayout_Refresh;
+        }
+
+        private void mSwipeRefreshLayout_Refresh(object sender, EventArgs e)
+        {
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += worker_DoWork;
+            worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+            worker.RunWorkerAsync();
+        }
+
+        private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            mSwipeRefreshLayout.Refreshing = false;
+        } 
+
+        private void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            //Will run on separate thread
+            Thread.Sleep(1000);
+        }
+
         public void inicializarRecyclerView()
         {
             recycler.HasFixedSize = true;
