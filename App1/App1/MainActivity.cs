@@ -5,6 +5,8 @@ using Android.Runtime;
 using Android.Widget;
 using Android.Content;
 using App1.Negocio;
+using System;
+using Android.Util;
 
 namespace App1
 {
@@ -12,6 +14,7 @@ namespace App1
     public class MainActivity : Activity
     {
         public Button btnIrRegistrar;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);

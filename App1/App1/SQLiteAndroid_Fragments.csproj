@@ -59,8 +59,11 @@
     <Compile Include="Datos\BaseDatos.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Modelo\Persona.cs" />
+    <Compile Include="Negocio\Acciones.cs" />
     <Compile Include="Negocio\AdaptadorRecyclerView.cs" />
     <Compile Include="Negocio\Fragment_Listado.cs" />
+    <Compile Include="Negocio\ItemClick.cs" />
+    <Compile Include="Negocio\MyAdapter.cs" />
     <Compile Include="Negocio\Registrar.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

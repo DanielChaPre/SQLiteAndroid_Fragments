@@ -23,7 +23,7 @@ namespace App1.Negocio
     {
         private SwipeRefreshLayout mSwipeRefreshLayout;
         private RecyclerView recycler;
-        private AdaptadorRecyclerView adaptador;
+        private MyAdapter adaptador;
         private RecyclerView.LayoutManager layoutManager;
         private List<Persona> lstPersona = new List<Persona>();
         BaseDatos baseDatos;
@@ -33,8 +33,10 @@ namespace App1.Negocio
             View view = inflater.Inflate(Resource.Layout.fragment_listado, container, false);
             inicializar(view);
             inicializarRecyclerView();
-           inicializarSwipeRefreshLayout();
+            inicializarSwipeRefreshLayout();
             cargarDatos();
+           // accionarLista();
+           // recuperarInformacion();
             return view;
         }
         public void inicializar(View view)
@@ -78,27 +80,99 @@ namespace App1.Negocio
             Context context = fragment_Listado.Context;
             layoutManager = new LinearLayoutManager(context);
             recycler.SetLayoutManager(layoutManager);
+            recycler.SetItemAnimator(new DefaultItemAnimator());
         }
         public void cargarDatos()
         {
             lstPersona = baseDatos.mostrarPersona();
-            adaptador = new AdaptadorRecyclerView(lstPersona);
+            adaptador = new MyAdapter(lstPersona);
             recycler.SetAdapter(adaptador);
            // validarListaVacia();
         }
-       /* public Boolean validarListaVacia()
+        /*public void recuperarInformacion()
         {
-            if (recycler.)
+            try
             {
-                Toast.MakeText(this, "La lista esta vacia", ToastLength.Long).Show();
-                Toast.MakeText(this, "Registre a una persona", ToastLength.Long).Show();
-                irRegistro();
-                return false;
+                string nombre = "";
+                int edad = 0;
+                string ocupacion = "";
+                string sexo = "";
+                nombre = adaptador.recuperarNombre();
+                edad = adaptador.recuperarEdad();
+                ocupacion = adaptador.recuperarOcupacion();
+                sexo = adaptador.recuperarSexo();
+                Console.WriteLine("Informacion");
+                Console.WriteLine("Nombre: " + nombre);
+                Console.WriteLine("Edad: " + edad);
+                Console.WriteLine("Ocupacion: " + ocupacion);
+                Console.WriteLine("Sexo: " + sexo);
+
             }
-            else
+            catch(Exception ex)
             {
-                return true;
+                Log.Info("Error", ex.Message);
             }
         }*/
+       /* public void irAcciones2()
+        {
+            Fragment_Listado adaptadorRecyclerView = this;
+            Context context = adaptadorRecyclerView.Context;
+            Intent intent = new Intent(context, typeof(Acciones));
+            StartActivity(intent);
+        }
+        public void irAcciones(int id, string nombre, string edad, string ocupacion, string sexo)
+        {
+            Fragment_Listado adaptadorRecyclerView = this;
+            Context context = adaptadorRecyclerView.Context;
+            Intent intent = new Intent(context, typeof(Acciones));
+            intent.PutExtra(Acciones.ID, id);
+            intent.PutExtra(Acciones.NOMBRE, nombre);
+            intent.PutExtra(Acciones.EDAD, edad);
+            intent.PutExtra(Acciones.OCUPACION, ocupacion);
+            intent.PutExtra(Acciones.SEXO, sexo);
+            StartActivity(intent);
+        }
+       /* public void seleccionaritemLista()
+        {
+            adaptador.itemClick += (s, e) => {
+                var txtNombre = e.View.FindViewById<TextView>(Resource.Id.textView1);
+                var txtEdad = e.View.FindViewById<TextView>(Resource.Id.textView2);
+                var txtOcupacion = e.View.FindViewById<TextView>(Resource.Id.textView3);
+                var txtSexo = e.View.FindViewById<TextView>(Resource.Id.textView4);
+                try
+                {
+                    txtNombre.Tag = e.Id;
+                    irAcciones(int.Parse(txtNombre.Tag.ToString()), txtNombre.Text, txtEdad.Text.Substring(0, 2), txtOcupacion.Text, txtSexo.Text);
+                }
+                catch (Exception ex)
+                {
+                    Log.Info("Error", ex.Message);
+                }
+            };
+        }
+        /*public void accionarLista()
+        {
+            recycler.Click += recycler_Cliked;
+        }
+
+        private void recycler_Cliked(object sender, EventArgs e)
+        {
+           int posicion = recycler.GetChildPosition((View)sender);
+           Console.WriteLine("Nombre de la persona " + lstPersona[posicion].nombre);
+        }*/
+        /* public Boolean validarListaVacia()
+{
+    if (recycler.)
+    {
+        Toast.MakeText(this, "La lista esta vacia", ToastLength.Long).Show();
+        Toast.MakeText(this, "Registre a una persona", ToastLength.Long).Show();
+        irRegistro();
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}*/
     }
 }

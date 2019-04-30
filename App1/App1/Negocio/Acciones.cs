@@ -16,22 +16,30 @@ using App1.Modelo;
 
 namespace App1.Negocio
 {
-    [Activity(Label = "Registrar")]
-    public class Registrar:Activity
+    [Activity(Label = "Modificacion")]
+    public class Acciones:Activity
     {
-        List<Persona> listaPersonas = new List<Persona>();
-        BaseDatos baseDatos;
         private RecyclerView recycler;
+        List<Persona> listaPersonas = new List<Persona>();
+        public static readonly string NOMBRE = "nombre";
+        public static readonly string EDAD = "edad";
+        public static readonly string OCUPACION = "ocupacion";
+        public static readonly string SEXO = "sexo";
+        public static readonly string ID = "id";
+        public Button btnActualizar, btnEliminar;
+        BaseDatos baseDatos;
         public EditText edtNombre, edtEdad, edtOcupacion;
         public RadioButton rdbMasculino, rdbFemenino;
-        public Button btnGuardar, btnCancelar;
+        public int id;
+        public string sexo;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            // Set our view from the "main" layout resource
-            SetContentView(Resource.Layout.activity_registro);
+            SetContentView(Resource.Layout.activity_movimientos);
             inicializar();
+            agarrarDatosLista();
             accionarBotones();
+
         }
         public void inicializar()
         {
@@ -42,40 +50,79 @@ namespace App1.Negocio
             edtNombre = FindViewById<EditText>(Resource.Id.edtNombre);
             edtOcupacion = FindViewById<EditText>(Resource.Id.edtOcupacion);
             edtEdad = FindViewById<EditText>(Resource.Id.edtEdad);
-            rdbMasculino = FindViewById<RadioButton>(Resource.Id.rdbMasculino);
-            rdbFemenino = FindViewById<RadioButton>(Resource.Id.rdbFemenino);
-            btnGuardar = FindViewById<Button>(Resource.Id.btnGuardarRegistro);
-            btnCancelar = FindViewById<Button>(Resource.Id.btnCancelarRegistro);
+            rdbMasculino = FindViewById<RadioButton>(Resource.Id.rdbMasculinoA);
+            rdbFemenino = FindViewById<RadioButton>(Resource.Id.rdbFemeninoA);
+            btnActualizar = FindViewById<Button>(Resource.Id.btnActualizarRegistro);
+            btnEliminar = FindViewById<Button>(Resource.Id.btnEliminarRegistro);
         }
         public void accionarBotones()
         {
-            btnGuardar.Click += delegate
+            btnActualizar.Click += delegate
             {
                 if (validarCamposVacios())
                 {
-                    guardarPersona();
+                    actualizarPersona();
                 }
             };
-            btnCancelar.Click += delegate
+            btnEliminar.Click += delegate
             {
-                regresarPantallaAnterior();
+                if (validarBotonEliminar())
+                {
+                    eliminarPersona();
+                }
             };
             edtEdad.TextChanged += delegate
             {
                 validarEdad();
             };
         }
-
-        public void guardarPersona()
+        public void agarrarDatosLista()
+        {
+            edtNombre.Text = Intent.Extras.GetString(NOMBRE);
+            edtEdad.Text = Intent.Extras.GetString(EDAD);
+            edtOcupacion.Text = Intent.Extras.GetString(OCUPACION);
+            seleccionarRadioButton(Intent.Extras.GetString(SEXO));
+            id = Intent.Extras.GetInt(ID);
+        }
+        public void seleccionarRadioButton(string sexo)
+        {
+            if (sexo.Equals("M"))
+            {
+                rdbMasculino.Checked = true;
+                rdbFemenino.Checked = false;
+            }
+            else if (sexo.Equals("F"))
+            {
+                rdbFemenino.Checked = true;
+                rdbMasculino.Checked = false;
+            }
+        }
+        public void actualizarPersona()
         {
             Persona persona = new Persona()
             {
+                Id = id,
+                nombre = edtNombre.Text,
+                edad = int.Parse(edtEdad.Text),
+                ocupacion = edtOcupacion.Text,
+                sexo = checarRadioButton()
+            };
+            baseDatos.actualizarPersona(persona);
+            limpiarCampos();
+            cargarDatos();
+            regresarPantallaAnterior();
+        }
+        public void eliminarPersona()
+        {
+            Persona persona = new Persona()
+            {
+                Id = id,
                 nombre = edtNombre.Text,
                 ocupacion = edtOcupacion.Text,
                 edad = int.Parse(edtEdad.Text),
                 sexo = checarRadioButton()
             };
-            baseDatos.insertarPersona(persona);
+            baseDatos.eliminarPersona(persona);
             limpiarCampos();
             cargarDatos();
             regresarPantallaAnterior();
@@ -91,13 +138,14 @@ namespace App1.Negocio
             listaPersonas = baseDatos.mostrarPersona();
             var adaptador = new MyAdapter(listaPersonas);
         }
+
         public void limpiarCampos()
         {
             edtNombre.Text = "";
             edtEdad.Text = "";
             edtOcupacion.Text = "";
             rdbMasculino.Checked = false;
-            rdbMasculino.Checked = false;
+            rdbFemenino.Checked = false;
         }
         public string checarRadioButton()
         {
@@ -146,6 +194,19 @@ namespace App1.Negocio
                 Log.Info("Error", ex.Message);
             }
             return validacion;
+        }
+        public Boolean validarBotonEliminar()
+        {
+            if (edtNombre.Text.Equals("") || edtEdad.Text.Equals("") || edtOcupacion.Text.Equals(""))
+            {
+                Toast.MakeText(this, "No se puede eliminar", ToastLength.Long).Show();
+                Toast.MakeText(this, "No se a seleccionado a una persona", ToastLength.Long).Show();
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         public override void OnBackPressed()
         {
