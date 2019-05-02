@@ -11,13 +11,12 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:id="@+id/relativeLayout1">
-		<fragment
-			class = "App1.Negocio.Fragment_Listado"
-			android:layout_width="match_parent"
+		<FrameLayout
+			android:id="@+id/FragmentContainer"
+		android:layout_width="match_parent"
 			android:layout_height="423.5dp"
 			android:layout_centerHorizontal="true"
-			android:layout_marginTop="30dp" 
-	/>
+			android:layout_marginTop="30dp"></FrameLayout>
 		<LinearLayout
 			android:orientation="vertical"
 			android:minWidth="25px"

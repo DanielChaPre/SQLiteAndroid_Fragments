@@ -19,15 +19,19 @@ using App1.Modelo;
 namespace App1.Negocio
 {
     [Activity(Label = "Listado de Personas")]
-    public class Fragment_Listado:Fragment
+    public class Fragment_Listado : Fragment
     {
         private SwipeRefreshLayout mSwipeRefreshLayout;
         private RecyclerView recycler;
-        private MyAdapter adaptador;
+        private AdaptadorRecyclerView adaptador;
         private RecyclerView.LayoutManager layoutManager;
         private List<Persona> lstPersona = new List<Persona>();
         BaseDatos baseDatos;
 
+        public override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+        }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View view = inflater.Inflate(Resource.Layout.fragment_listado, container, false);
@@ -35,10 +39,9 @@ namespace App1.Negocio
             inicializarRecyclerView();
             inicializarSwipeRefreshLayout();
             cargarDatos();
-           // accionarLista();
-           // recuperarInformacion();
             return view;
         }
+
         public void inicializar(View view)
         {
             baseDatos = new BaseDatos();
@@ -65,7 +68,7 @@ namespace App1.Negocio
         private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             mSwipeRefreshLayout.Refreshing = false;
-        } 
+        }
 
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -85,94 +88,33 @@ namespace App1.Negocio
         public void cargarDatos()
         {
             lstPersona = baseDatos.mostrarPersona();
-            adaptador = new MyAdapter(lstPersona);
+            adaptador = new AdaptadorRecyclerView(Activity,lstPersona, recycler);
             recycler.SetAdapter(adaptador);
-           // validarListaVacia();
         }
-        /*public void recuperarInformacion()
+        public void pruebaIrAcciones(Context cont)
         {
             try
             {
-                string nombre = "";
-                int edad = 0;
-                string ocupacion = "";
-                string sexo = "";
-                nombre = adaptador.recuperarNombre();
-                edad = adaptador.recuperarEdad();
-                ocupacion = adaptador.recuperarOcupacion();
-                sexo = adaptador.recuperarSexo();
-                Console.WriteLine("Informacion");
-                Console.WriteLine("Nombre: " + nombre);
-                Console.WriteLine("Edad: " + edad);
-                Console.WriteLine("Ocupacion: " + ocupacion);
-                Console.WriteLine("Sexo: " + sexo);
-
+                var intent = new Intent(cont, typeof(Acciones));
+                StartActivity(intent);
             }
             catch(Exception ex)
             {
                 Log.Info("Error", ex.Message);
             }
-        }*/
-       /* public void irAcciones2()
-        {
-            Fragment_Listado adaptadorRecyclerView = this;
-            Context context = adaptadorRecyclerView.Context;
-            Intent intent = new Intent(context, typeof(Acciones));
-            StartActivity(intent);
+            
+            //Intent intent = new Intent(Activity.ApplicationContext, typeof(Acciones));
+            //StartActivity(intent);
         }
-        public void irAcciones(int id, string nombre, string edad, string ocupacion, string sexo)
+      /*  public void irAcciones(int id, string nombre, int edad, string ocupacion, string sexo)
         {
-            Fragment_Listado adaptadorRecyclerView = this;
-            Context context = adaptadorRecyclerView.Context;
-            Intent intent = new Intent(context, typeof(Acciones));
+            Intent intent = new Intent(Activity, typeof(Acciones));
             intent.PutExtra(Acciones.ID, id);
             intent.PutExtra(Acciones.NOMBRE, nombre);
             intent.PutExtra(Acciones.EDAD, edad);
             intent.PutExtra(Acciones.OCUPACION, ocupacion);
             intent.PutExtra(Acciones.SEXO, sexo);
             StartActivity(intent);
-        }
-       /* public void seleccionaritemLista()
-        {
-            adaptador.itemClick += (s, e) => {
-                var txtNombre = e.View.FindViewById<TextView>(Resource.Id.textView1);
-                var txtEdad = e.View.FindViewById<TextView>(Resource.Id.textView2);
-                var txtOcupacion = e.View.FindViewById<TextView>(Resource.Id.textView3);
-                var txtSexo = e.View.FindViewById<TextView>(Resource.Id.textView4);
-                try
-                {
-                    txtNombre.Tag = e.Id;
-                    irAcciones(int.Parse(txtNombre.Tag.ToString()), txtNombre.Text, txtEdad.Text.Substring(0, 2), txtOcupacion.Text, txtSexo.Text);
-                }
-                catch (Exception ex)
-                {
-                    Log.Info("Error", ex.Message);
-                }
-            };
-        }
-        /*public void accionarLista()
-        {
-            recycler.Click += recycler_Cliked;
-        }
-
-        private void recycler_Cliked(object sender, EventArgs e)
-        {
-           int posicion = recycler.GetChildPosition((View)sender);
-           Console.WriteLine("Nombre de la persona " + lstPersona[posicion].nombre);
         }*/
-        /* public Boolean validarListaVacia()
-{
-    if (recycler.)
-    {
-        Toast.MakeText(this, "La lista esta vacia", ToastLength.Long).Show();
-        Toast.MakeText(this, "Registre a una persona", ToastLength.Long).Show();
-        irRegistro();
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-}*/
     }
 }

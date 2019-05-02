@@ -17,7 +17,7 @@ using App1.Modelo;
 namespace App1.Negocio
 {
     [Activity(Label = "Modificacion")]
-    public class Acciones:Activity
+    public class Acciones : Activity
     {
         private RecyclerView recycler;
         List<Persona> listaPersonas = new List<Persona>();
@@ -37,7 +37,7 @@ namespace App1.Negocio
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_movimientos);
             inicializar();
-            agarrarDatosLista();
+          //  agarrarDatosLista();
             accionarBotones();
 
         }
@@ -54,6 +54,7 @@ namespace App1.Negocio
             rdbFemenino = FindViewById<RadioButton>(Resource.Id.rdbFemeninoA);
             btnActualizar = FindViewById<Button>(Resource.Id.btnActualizarRegistro);
             btnEliminar = FindViewById<Button>(Resource.Id.btnEliminarRegistro);
+            recycler = FindViewById<RecyclerView>(Resource.Id.rcvLista);
         }
         public void accionarBotones()
         {
@@ -136,7 +137,7 @@ namespace App1.Negocio
         public void cargarDatos()
         {
             listaPersonas = baseDatos.mostrarPersona();
-            var adaptador = new MyAdapter(listaPersonas);
+            var adaptador = new AdaptadorRecyclerView(this,listaPersonas, recycler);
         }
 
         public void limpiarCampos()

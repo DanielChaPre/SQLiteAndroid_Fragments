@@ -46,6 +46,7 @@ namespace App1.Negocio
             rdbFemenino = FindViewById<RadioButton>(Resource.Id.rdbFemenino);
             btnGuardar = FindViewById<Button>(Resource.Id.btnGuardarRegistro);
             btnCancelar = FindViewById<Button>(Resource.Id.btnCancelarRegistro);
+            recycler = FindViewById<RecyclerView>(Resource.Id.rcvLista);
         }
         public void accionarBotones()
         {
@@ -89,7 +90,7 @@ namespace App1.Negocio
         public void cargarDatos()
         {
             listaPersonas = baseDatos.mostrarPersona();
-            var adaptador = new MyAdapter(listaPersonas);
+            var adaptador = new AdaptadorRecyclerView(this,listaPersonas, recycler);
         }
         public void limpiarCampos()
         {

@@ -1,12 +1,9 @@
 ﻿using Android.App;
 using Android.OS;
-using Android.Support.V7.App;
-using Android.Runtime;
 using Android.Widget;
 using Android.Content;
 using App1.Negocio;
 using System;
-using Android.Util;
 
 namespace App1
 {
@@ -20,16 +17,34 @@ namespace App1
             base.OnCreate(savedInstanceState);
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.activity_main);
+            inicializar();
+            accionarBoton();
+            inicializarFragmento();
+        }
+        public void inicializar()
+        {
             btnIrRegistrar = FindViewById<Button>(Resource.Id.btnRegistrar);
+        }
+        public void accionarBoton()
+        {
             btnIrRegistrar.Click += delegate
             {
-                irRegistro();
+                IrRegistro();
+                //  irAcciones2();
             };
         }
-        public void irRegistro()
+        public void IrRegistro()
         {
             var i = new Intent(this, typeof(Registrar));
+            Console.WriteLine("Contexto: " + this);
             StartActivity(i);
+        }
+        public void inicializarFragmento()
+        {
+            var fragTx = FragmentManager.BeginTransaction();
+            var frag = new Fragment_Listado();
+            fragTx.Add(Resource.Id.FragmentContainer, frag);
+            fragTx.Commit();
         }
     }
 }
