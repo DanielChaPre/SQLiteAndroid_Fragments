@@ -4,6 +4,7 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="110dp"
+	android:layout_marginBottom="15dp"
 	>
 	<LinearLayout
 		android:orientation="vertical"
@@ -12,6 +13,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
 		android:id="@+id/linearLayout1"
+		android:layout_marginLeft="150dp"
 		>
 		<TextView
 			android:layout_width="match_parent"
@@ -19,7 +21,8 @@
 			android:id="@+id/txtNombre"
 			android:textColor="#000"
 			android:textSize="20dp"
-			android:gravity="center"
+			
+		
 		/>
 		<TextView
 			android:layout_width="match_parent"
@@ -27,7 +30,7 @@
 			android:id="@+id/txtEdad"
 			android:textColor="#000"
 			android:textSize="20dp"
-			android:gravity="center"
+			
 		/>
 		<TextView
 			android:layout_width="match_parent"
@@ -35,7 +38,7 @@
 			android:id="@+id/txtOcupacion"
 			android:textColor="#000"
 			android:textSize="20dp"
-			android:gravity="center"
+			
 		/>
 		<TextView
 			android:layout_width="match_parent"
@@ -43,7 +46,13 @@
 			android:id="@+id/txtSexo"
 			android:textColor="#000"
 			android:textSize="20dp"
-			android:gravity="center"
+			
 		/>
 	</LinearLayout>
+	<ImageView
+		android:src="@android:drawable/ic_menu_gallery"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:id="@+id/imgSexo"
+		android:layout_marginRight="250dp" />
 </android.support.v7.widget.CardView>

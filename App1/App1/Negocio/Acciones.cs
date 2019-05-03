@@ -28,8 +28,11 @@ namespace App1.Negocio
         public static readonly string ID = "id";
         public Button btnActualizar, btnEliminar;
         BaseDatos baseDatos;
-        public EditText edtNombre, edtEdad, edtOcupacion;
+        public EditText edtNombre,edtOcupacion;
         public RadioButton rdbMasculino, rdbFemenino;
+        public Spinner sprEdad;
+        List<int> edades = new List<int>();
+        int edad;
         public int id;
         public string sexo;
         protected override void OnCreate(Bundle savedInstanceState)
@@ -37,7 +40,8 @@ namespace App1.Negocio
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_movimientos);
             inicializar();
-          //  agarrarDatosLista();
+            inicializarSpinner();
+            agarrarDatosLista();
             accionarBotones();
 
         }
@@ -49,12 +53,12 @@ namespace App1.Negocio
             Log.Info("DB_PATH", folder);
             edtNombre = FindViewById<EditText>(Resource.Id.edtNombre);
             edtOcupacion = FindViewById<EditText>(Resource.Id.edtOcupacion);
-            edtEdad = FindViewById<EditText>(Resource.Id.edtEdad);
             rdbMasculino = FindViewById<RadioButton>(Resource.Id.rdbMasculinoA);
             rdbFemenino = FindViewById<RadioButton>(Resource.Id.rdbFemeninoA);
             btnActualizar = FindViewById<Button>(Resource.Id.btnActualizarRegistro);
             btnEliminar = FindViewById<Button>(Resource.Id.btnEliminarRegistro);
             recycler = FindViewById<RecyclerView>(Resource.Id.rcvLista);
+            sprEdad = FindViewById<Spinner>(Resource.Id.sprEdad);
         }
         public void accionarBotones()
         {
@@ -72,18 +76,39 @@ namespace App1.Negocio
                     eliminarPersona();
                 }
             };
-            edtEdad.TextChanged += delegate
+            sprEdad.ItemSelected += (sender, e) =>
             {
-                validarEdad();
+                var edadSpinner = sender as Spinner;
+                edad = int.Parse(Convert.ToString(edadSpinner.GetItemAtPosition(e.Position)));
             };
+
         }
         public void agarrarDatosLista()
         {
             edtNombre.Text = Intent.Extras.GetString(NOMBRE);
-            edtEdad.Text = Intent.Extras.GetString(EDAD);
+            seleccionarSpinner(Intent.Extras.GetString(EDAD));
             edtOcupacion.Text = Intent.Extras.GetString(OCUPACION);
             seleccionarRadioButton(Intent.Extras.GetString(SEXO));
             id = Intent.Extras.GetInt(ID);
+        }
+        public void seleccionarSpinner(string edadExtraida)
+        {
+            int indice = int.Parse(edadExtraida)-18;
+            sprEdad.SetSelection(indice);
+        }
+        public void llenarArray()
+        {
+
+            for (int i = 18; i <= 60; i++)
+            {
+                edades.Add(i);
+            }
+        }
+        public void inicializarSpinner()
+        {
+            llenarArray();
+            var adaptadorSpinner = new ArrayAdapter<int>(this, Android.Resource.Layout.SimpleSpinnerItem, edades);
+            sprEdad.Adapter = adaptadorSpinner;
         }
         public void seleccionarRadioButton(string sexo)
         {
@@ -100,33 +125,65 @@ namespace App1.Negocio
         }
         public void actualizarPersona()
         {
-            Persona persona = new Persona()
+            try
             {
-                Id = id,
-                nombre = edtNombre.Text,
-                edad = int.Parse(edtEdad.Text),
-                ocupacion = edtOcupacion.Text,
-                sexo = checarRadioButton()
-            };
-            baseDatos.actualizarPersona(persona);
-            limpiarCampos();
-            cargarDatos();
-            regresarPantallaAnterior();
+                Persona persona = new Persona()
+                {
+                    Id = id,
+                    nombre = edtNombre.Text,
+                    edad = edad,
+                    ocupacion = edtOcupacion.Text,
+                    sexo = checarRadioButton(),
+                    idImagen = guardarImagen()
+                };
+                baseDatos.actualizarPersona(persona);
+                limpiarCampos();
+                cargarDatos();
+                regresarPantallaAnterior();
+                Toast.MakeText(this, "Los datos de la persona se actualizaron correctamente", ToastLength.Long).Show();
+            }
+            catch (Exception ex)
+            {
+                Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
+            }
         }
         public void eliminarPersona()
         {
-            Persona persona = new Persona()
+            try
             {
-                Id = id,
-                nombre = edtNombre.Text,
-                ocupacion = edtOcupacion.Text,
-                edad = int.Parse(edtEdad.Text),
-                sexo = checarRadioButton()
-            };
-            baseDatos.eliminarPersona(persona);
-            limpiarCampos();
-            cargarDatos();
-            regresarPantallaAnterior();
+                Persona persona = new Persona()
+                {
+                    Id = id,
+                    nombre = edtNombre.Text,
+                    ocupacion = edtOcupacion.Text,
+                    edad = edad,
+                    sexo = checarRadioButton(),
+                    idImagen = guardarImagen()
+                };
+                baseDatos.eliminarPersona(persona);
+                limpiarCampos();
+                cargarDatos();
+                regresarPantallaAnterior();
+                Toast.MakeText(this, "La persona se elimino correctamente", ToastLength.Long).Show();
+            }
+            catch (Exception ex)
+            {
+                Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
+            }
+        }
+        public int guardarImagen()
+        {
+            int idImagen = 0;
+            string sexo = checarRadioButton();
+            if (sexo.Equals("M"))
+            {
+                idImagen = Resource.Drawable.icon_man;
+            }
+            else
+            {
+                idImagen = 0;
+            }
+            return idImagen;
         }
         public void regresarPantallaAnterior()
         {
@@ -139,11 +196,9 @@ namespace App1.Negocio
             listaPersonas = baseDatos.mostrarPersona();
             var adaptador = new AdaptadorRecyclerView(this,listaPersonas, recycler);
         }
-
         public void limpiarCampos()
         {
             edtNombre.Text = "";
-            edtEdad.Text = "";
             edtOcupacion.Text = "";
             rdbMasculino.Checked = false;
             rdbFemenino.Checked = false;
@@ -163,7 +218,7 @@ namespace App1.Negocio
         }
         public Boolean validarCamposVacios()
         {
-            if (edtNombre.Text.Equals("") || edtEdad.Text.Equals("") || edtOcupacion.Text.Equals(""))
+            if (edtNombre.Text.Equals("") || edtOcupacion.Text.Equals(""))
             {
                 Toast.MakeText(this, "Existen Campos Vacios", ToastLength.Long).Show();
                 return false;
@@ -173,32 +228,9 @@ namespace App1.Negocio
                 return true;
             }
         }
-        public Boolean validarEdad()
-        {
-            Boolean validacion = false;
-            try
-            {
-                int edad = int.Parse(edtEdad.Text);
-                if (edad >= 100)
-                {
-                    Toast.MakeText(this, "La edad es mayor a 100 años", ToastLength.Long).Show();
-                    Toast.MakeText(this, "No se puede registrar", ToastLength.Long).Show();
-                    validacion = false;
-                }
-                else
-                {
-                    validacion = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Info("Error", ex.Message);
-            }
-            return validacion;
-        }
         public Boolean validarBotonEliminar()
         {
-            if (edtNombre.Text.Equals("") || edtEdad.Text.Equals("") || edtOcupacion.Text.Equals(""))
+            if (edtNombre.Text.Equals("") || edtOcupacion.Text.Equals(""))
             {
                 Toast.MakeText(this, "No se puede eliminar", ToastLength.Long).Show();
                 Toast.MakeText(this, "No se a seleccionado a una persona", ToastLength.Long).Show();
@@ -211,7 +243,7 @@ namespace App1.Negocio
         }
         public override void OnBackPressed()
         {
-            regresarPantallaAnterior();
+            this.Finish();
         }
     }
 }

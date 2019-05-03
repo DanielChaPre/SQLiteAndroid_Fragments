@@ -36,7 +36,6 @@ namespace App1
         public void IrRegistro()
         {
             var i = new Intent(this, typeof(Registrar));
-            Console.WriteLine("Contexto: " + this);
             StartActivity(i);
         }
         public void inicializarFragmento()
@@ -45,6 +44,11 @@ namespace App1
             var frag = new Fragment_Listado();
             fragTx.Add(Resource.Id.FragmentContainer, frag);
             fragTx.Commit();
+        }
+        public override void OnBackPressed()
+        {
+            this.Finish();
+            Toast.MakeText(this, "La aplicacion se cerro", ToastLength.Long).Show();
         }
     }
 }

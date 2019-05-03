@@ -30,7 +30,9 @@
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:id="@+id/btnRegistrar"
-				android:layout_marginTop="15dp" />
+				android:layout_marginTop="15dp"
+				android:background="#ff00e676"
+				android:textColor="#ff616161" />
 		</LinearLayout>
 	</RelativeLayout>
 	

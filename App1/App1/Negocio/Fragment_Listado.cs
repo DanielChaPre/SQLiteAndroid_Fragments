@@ -41,7 +41,6 @@ namespace App1.Negocio
             cargarDatos();
             return view;
         }
-
         public void inicializar(View view)
         {
             baseDatos = new BaseDatos();
@@ -50,13 +49,13 @@ namespace App1.Negocio
             Log.Info("DB_PATH", folder);
             recycler = view.FindViewById<RecyclerView>(Resource.Id.rcvLista);
             mSwipeRefreshLayout = view.FindViewById<SwipeRefreshLayout>(Resource.Id.swlActualizar);
+            
         }
         public void inicializarSwipeRefreshLayout()
         {
             mSwipeRefreshLayout.SetColorScheme(Android.Resource.Color.HoloBlueBright, Android.Resource.Color.HoloBlueDark, Android.Resource.Color.HoloGreenLight, Android.Resource.Color.HoloRedLight);
             mSwipeRefreshLayout.Refresh += mSwipeRefreshLayout_Refresh;
         }
-
         private void mSwipeRefreshLayout_Refresh(object sender, EventArgs e)
         {
             BackgroundWorker worker = new BackgroundWorker();
@@ -64,18 +63,15 @@ namespace App1.Negocio
             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
             worker.RunWorkerAsync();
         }
-
         private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             mSwipeRefreshLayout.Refreshing = false;
         }
-
         private void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             //Will run on separate thread
             Thread.Sleep(1000);
         }
-
         public void inicializarRecyclerView()
         {
             recycler.HasFixedSize = true;
@@ -90,31 +86,26 @@ namespace App1.Negocio
             lstPersona = baseDatos.mostrarPersona();
             adaptador = new AdaptadorRecyclerView(Activity,lstPersona, recycler);
             recycler.SetAdapter(adaptador);
+            validarListaVacia();
         }
-        public void pruebaIrAcciones(Context cont)
+        public Boolean validarListaVacia()
         {
-            try
+            if (lstPersona.Count == 0)
             {
-                var intent = new Intent(cont, typeof(Acciones));
-                StartActivity(intent);
+                Toast.MakeText(Activity.ApplicationContext, "La lista esta vacia", ToastLength.Long).Show();
+                Toast.MakeText(Activity.ApplicationContext, "Registre a una persona", ToastLength.Long).Show();
+                irRegistro();
+                return false;
             }
-            catch(Exception ex)
+            else
             {
-                Log.Info("Error", ex.Message);
+                return true;
             }
-            
-            //Intent intent = new Intent(Activity.ApplicationContext, typeof(Acciones));
-            //StartActivity(intent);
         }
-      /*  public void irAcciones(int id, string nombre, int edad, string ocupacion, string sexo)
+        public void irRegistro()
         {
-            Intent intent = new Intent(Activity, typeof(Acciones));
-            intent.PutExtra(Acciones.ID, id);
-            intent.PutExtra(Acciones.NOMBRE, nombre);
-            intent.PutExtra(Acciones.EDAD, edad);
-            intent.PutExtra(Acciones.OCUPACION, ocupacion);
-            intent.PutExtra(Acciones.SEXO, sexo);
-            StartActivity(intent);
-        }*/
+            var i = new Intent(Activity.ApplicationContext, typeof(Registrar));
+            StartActivity(i);
+        }
     }
 }

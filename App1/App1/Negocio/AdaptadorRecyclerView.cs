@@ -17,24 +17,22 @@ namespace App1.Negocio
         public TextView txtEdad { get; set; }
         public TextView txtOcupacion { get; set; }
         public TextView txtSexo { get; set; }
+        public ImageView imgSexo { get; set; }
         public View mRecycle { get; set; }
         
         public RecyclerViewHolder(View itemView): base(itemView)
         {
+            
             txtNombre = itemView.FindViewById<TextView>(Resource.Id.txtNombre);
             txtEdad = itemView.FindViewById<TextView>(Resource.Id.txtEdad);
             txtOcupacion = itemView.FindViewById<TextView>(Resource.Id.txtOcupacion);
             txtSexo = itemView.FindViewById<TextView>(Resource.Id.txtSexo);
+            imgSexo = itemView.FindViewById<ImageView>(Resource.Id.imgSexo);
             mRecycle = itemView;
-            
         }
     }
     public class AdaptadorRecyclerView : RecyclerView.Adapter
     {
-      
-        Fragment_Listado listado;
-        MainActivity main;
-        //int posicion = 0;
         private List<Persona> lstPersona = new List<Persona>();
         private RecyclerView mRecyclerView;
         public Context cont;
@@ -55,34 +53,47 @@ namespace App1.Negocio
         {
             RecyclerViewHolder viewHolder = holder as RecyclerViewHolder;
             viewHolder.txtNombre.Text = lstPersona[position].nombre;
-            viewHolder.txtEdad.Text = "" + lstPersona[position].edad + " años";
+            viewHolder.txtEdad.Text = "" + lstPersona[position].edad + "  años";
             viewHolder.txtOcupacion.Text = lstPersona[position].ocupacion;
-            viewHolder.txtSexo.Text = lstPersona[position].sexo;  
+            viewHolder.txtSexo.Text = lstPersona[position].sexo;
+            //viewHolder.imgSexo.SetImageResource(lstPersona[position].idImagen);
+            checarImagen(viewHolder.txtSexo.Text, viewHolder);
             viewHolder.mRecycle.Click += lista_Click;
-           
         }
         public void lista_Click(object sender, EventArgs e)
         {
-            listado = new Fragment_Listado();
-            //posicion = mRecyclerView.GetChildPosition((View)sender);
-             listado.pruebaIrAcciones(cont);
-           // Console.WriteLine("Contexto: " + cont);
-          //  main.irAcciones(posicion,lstPersona[posicion].nombre, lstPersona[posicion].edad, lstPersona[posicion].ocupacion, lstPersona[posicion].sexo);
-            //listado.prueba(posicion,lstPersona[posicion].nombre, lstPersona[posicion].edad, lstPersona[posicion].ocupacion, lstPersona[posicion].sexo);
-            ///listado.irAcciones(posicion, lstPersona[posicion].nombre, lstPersona[posicion].edad, lstPersona[posicion].ocupacion, lstPersona[posicion].sexo);
+             int position = mRecyclerView.GetChildAdapterPosition((View)sender);
+             string edad = lstPersona[position].edad.ToString();
+             int id = lstPersona[position].Id;
+             try
+             {
+                 irAcciones(cont, id, lstPersona[position].nombre, edad, lstPersona[position].ocupacion, lstPersona[position].sexo);
+             }
+             catch(Exception ex)
+             {
+                 Log.Info("Error", ex.Message);
+             }
         }
-       /* public void pruebaIrAcciones()
+        public void irAcciones(Context context,int id, string nombre, string edad, string ocupacion, string sexo)
         {
-            try
+            Intent intent = new Intent(context, typeof(Acciones));
+            intent.PutExtra(Acciones.ID, id);
+            intent.PutExtra(Acciones.NOMBRE, nombre);
+            intent.PutExtra(Acciones.EDAD, edad);
+            intent.PutExtra(Acciones.OCUPACION, ocupacion);
+            intent.PutExtra(Acciones.SEXO, sexo);
+            context.StartActivity(intent);
+        }
+        public void checarImagen(string sexo, RecyclerViewHolder holder)
+        {
+            if (sexo.Equals("M"))
             {
-                var intent = new Intent(cont, typeof(Acciones));
-                StartActivity(intent);
-            }
-            catch (Exception ex)
+                holder.imgSexo.SetImageResource(Resource.Drawable.icon_man);
+            }else if (sexo.Equals("F"))
             {
-                Log.Info("Error", ex.Message);
+                holder.imgSexo.SetImageResource(Resource.Drawable.icon_woman);
             }
-        }*/
+        }
         public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             LayoutInflater inflater = LayoutInflater.From(parent.Context);

@@ -22,5 +22,6 @@ namespace App1.Modelo
         public int edad { get; set; }
         public string ocupacion { get; set; }
         public string sexo { get; set; }
+        public int idImagen { get; set; }
     }
 }

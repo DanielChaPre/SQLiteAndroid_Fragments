@@ -27,13 +27,11 @@
 		android:paddingLeft="170dp"
 		android:textColor="#ff000000"
 		android:textSize="20dp" />
-		<EditText
-			android:hint ="Ingrese su Edad"
-			android:inputType="number"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/edtEdad"
-			android:layout_marginTop="25px" />
+		<Spinner
+	    android:id="@+id/sprEdad"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+      />
 	<TextView
 		android:text="Ocupacion"
 		android:layout_width="match_parent"
@@ -108,7 +106,9 @@
 			android:height="120px"
 			android:maxHeight="120px"
 			android:minHeight="120px"
-			android:elegantTextHeight="true" />
+			android:elegantTextHeight="true"
+			android:textColor="#ff616161"
+			android:background="#ff00e676" />
 		<Button
 			android:text="Eliminar"
 			android:layout_width="wrap_content"
@@ -120,6 +120,8 @@
 			android:width="320px"
 			android:height="120px"
 			android:maxHeight="120px"
-			android:minHeight="120px" />
+			android:minHeight="120px"
+			android:textColor="#ff616161"
+			android:background="#ff00e676" />
 	</LinearLayout>
 </LinearLayout>
